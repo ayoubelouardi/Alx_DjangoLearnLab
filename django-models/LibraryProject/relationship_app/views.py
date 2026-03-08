@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic.detail import DetailView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 from django.urls import reverse_lazy
 from .models import Book
 from .models import Library
@@ -31,8 +32,9 @@ def register(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            return reverse_lazy("login")
+            user = form.save()
+            login(request, user)
+            return reverse_lazy("list_books")
     else:
         form = UserCreationForm()
     return render(request, "relationship_app/register.html", {"form": form})
